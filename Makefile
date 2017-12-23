@@ -1,38 +1,63 @@
-# Makefile for CS 455 extra credit assgt Fall 2017
+# Makefile for CS 455 PA5
 #
 #     gmake getfiles
 #        Copies or links assignment files to current directory
 #
-#     gmake ectest
-#        Makes ectest executable
+#     gmake concord
+#        Makes concord executable
+#
+#     gmake grades
+#        Makes grades executable
+#
+#     gmake pa5list
+#	 Makes pa5list executable.  (This is a test driver for your list functions)
 #
 #     gmake submit
 #        Submits the assignment.
+#
 #
 
 # need to use gmake
 
 HOME = /auto/home-scf-06/csci455/
 ASSGTS = $(HOME)/assgts
-ASSGTDIR = $(HOME)/assgts/ec
+ASSGTDIR = $(HOME)/assgts/pa5
 
-CXX = g++
-
-CXXFLAGS = -ggdb -Wall
-OBJS = ecListFuncs.o ectest.o
 
 getfiles:
-	-$(ASSGTS)/bin/safecopy $(ASSGTDIR)/ecListFuncs.cpp
-	-$(ASSGTS)/bin/safecopy $(ASSGTDIR)/ecListFuncs.h
-	-$(ASSGTS)/bin/safecopy $(ASSGTDIR)/ectest.cpp
-	-$(ASSGTS)/bin/safecopy $(ASSGTDIR)/Makefile
+	-ln -s $(ASSGTDIR)/melville.txt .
+	-ln -s $(ASSGTDIR)/poe.txt .
 	-$(ASSGTS)/bin/safecopy $(ASSGTDIR)/README
+	-$(ASSGTS)/bin/safecopy $(ASSGTDIR)/concord.cpp
+	-$(ASSGTS)/bin/safecopy $(ASSGTDIR)/grades.cpp
+	-$(ASSGTS)/bin/safecopy $(ASSGTDIR)/Table.h
+	-$(ASSGTS)/bin/safecopy $(ASSGTDIR)/Table.cpp
+	-$(ASSGTS)/bin/safecopy $(ASSGTDIR)/listFuncs.h
+	-$(ASSGTS)/bin/safecopy $(ASSGTDIR)/listFuncs.cpp
+	-$(ASSGTS)/bin/safecopy $(ASSGTDIR)/pa5list.cpp
+	-$(ASSGTS)/bin/safecopy $(ASSGTDIR)/Makefile
 
-ectest: $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) -o ectest
 
-$(OBJS): ecListFuncs.h
+concord: concord.o Table.o listFuncs.o
+	g++ -ggdb -Wall -Wno-sign-compare -o concord concord.o Table.o listFuncs.o
 
+grades: grades.o Table.o listFuncs.o
+	g++ -ggdb -Wall -Wno-sign-compare -o grades grades.o Table.o listFuncs.o
 
-submit: 
-	submit -user csci455 -tag ec README ecListFuncs.cpp
+pa5list: pa5list.cpp listFuncs.o listFuncs.h
+	g++ -ggdb -Wall pa5list.cpp listFuncs.o -o pa5list
+
+concord.o: concord.cpp Table.h
+	g++ -ggdb -Wall -Wno-sign-compare -c concord.cpp
+
+Table.o: Table.cpp Table.h listFuncs.h
+	g++ -ggdb -Wall -Wno-sign-compare -c Table.cpp
+
+grades.o: grades.cpp Table.h
+	g++ -ggdb -Wall -Wno-sign-compare -c grades.cpp
+
+listFuncs.o: listFuncs.cpp listFuncs.h
+	g++ -ggdb -Wall -Wno-sign-compare -c listFuncs.cpp
+
+submit:
+	submit -user csci455 -tag pa5 README Table.h Table.cpp grades.cpp listFuncs.h listFuncs.cpp
